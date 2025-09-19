@@ -1,0 +1,40 @@
+import csv
+
+
+contactlist=[("Beyonce Knowles", "bey", "561-1234321"), ("Cardi B",
+"Belcalis", "305-4399521"), ("Earl Simmons", "DMX", "305-1010101")]
+
+
+
+def add_contact(name,nickname,number):
+    for contact in contactlist:
+        if name in contact:
+            contact = (name,nickname,number)
+            return False
+        else:
+            contactlist.append(name,nickname,number)
+            return True
+        
+
+def remove_contact(contactname):
+    for contact in contactlist:
+        if contactname in  contact:
+            contactlist.pop(contact)
+
+
+def find_contact(str,searchby="name"):
+    for contact in contactlist:
+        if searchby == "name" and str in contact:
+            return contact
+        elif searchby == "nickname" and str in contact:
+            return contact
+        else:
+            return None
+        
+def savetoCSV(contactlist):
+    f1 =open("contactlist.csv",mode="w",newline="")
+    writer= csv.writer(f1)
+    for contact in contactlist:
+        writer.writerow(contact)
+
+savetoCSV(contactlist)

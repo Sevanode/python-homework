@@ -1,5 +1,8 @@
 
 def line_number(filename1,filename2):
+    """This function takes in a input file and copies all the information on it
+    and numbers the line as it outputs to a txt file
+    """
     f1 = open(filename1,"r+")
     f2 = open(filename2,"w")
 
@@ -31,7 +34,7 @@ def parse_functions(filename1):
                 func[2]+=line
                 print(func[2])
 
-            if lines[i+1] == "\n":
+            if lines[i+1] not in  "   ":
                 functions.append(tuple(func))
     functions=sorted(functions)
     return tuple(functions)
@@ -40,4 +43,4 @@ def parse_functions(filename1):
 
 print(parse_functions("q2test.py"))
 
-
+line_number("test2.py","test232.txt")
