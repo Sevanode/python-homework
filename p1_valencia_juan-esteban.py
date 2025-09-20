@@ -1,46 +1,71 @@
-
-def line_number(filename1,filename2):
-    """This function takes in a input file and copies all the information on it
-    and numbers the line as it outputs to a txt file
+def line_number(filename1, filename2):
     """
-    f1 = open(filename1,"r+")
-    f2 = open(filename2,"w")
-
-    lines = f1.readlines()
-    for index, line in enumerate(lines):
-        f2.write(f"{index+1}.{line}")
+    Copies all lines from filename1 to filename2, numbering each line.
+    
+    Args:
+        filename1 (str): Path to the input file.
+        filename2 (str): Path to the output file.
+    """
+    try:
+        with open(filename1, "r") as f1, open(filename2, "w") as f2:
+            lines = f1.readlines()
+            for index, line in enumerate(lines):
+                f2.write(f"{index + 1}.{line}")  # Write line number and content
+    except FileNotFoundError:
+        print(f"Error: File '{filename1}' not found.")
+    except Exception as e:
+        print(f"An error occurred: {e}")
 
 def parse_functions(filename1):
-    f1 = open(filename1, "r")
-    lines = f1.readlines()
-    functions=[]
-    func=[]
-    for i, line in enumerate(lines):
+    """
+    Parses the given Python file and extracts function definitions.
+    Removes comments and returns a tuple of functions with their name, line number, and code.
+    
+    Args:
+        filename1 (str): Path to the Python source file.
+    
+    Returns:
+        tuple: Each element is a tuple (function_name, line_number, function_code).
+    """
+    functions = []
+    try:
+        with open(filename1, "r") as f1:
+            lines = f1.readlines()
+            func = []
+            for i, line in enumerate(lines):
+                # Remove comments from the line
+                if "#" in line:
+                    line = line[:line.find("#")] + "\n"
 
-        if "#" in line:  #This line checks if there are any comments 
-            line=line[0:line.find("#")]+"\n"  #If there are any it slices of whatever is after the # and then re adds the new line operator
+                # Detect function definition
+                if "def" in line:
+                    func = []
+                    # Extract function name
+                    func.append(line[line.find(" ") + 1:line.find("(")])
+                    func.append(i + 1)  # Line number
+                    func.append(line)    # Function definition line
+                    continue
 
-        if "def" in line:
-            func=[]
-            func.append(line[line.find(" ")+1:line.find("(")]) #This grabs the function name by substringing the text in between def and (
-            func.append(i+1)
-            func.append(line)
-            continue
+                # Detect indented lines (function body)
+                if "  " in line:
+                    if line == "    \n":  # Skip empty indented lines
+                        pass
+                    else:
+                        func[2] += line  # Append to function code
+                        # print(func[2])  # Debug print
 
-        if "  " in line:
-            if line == "    \n" :    #clears comment cleared lines
-                pass
-            else:
-                func[2]+=line
-                print(func[2])
+                    # Check if next line is not indented (end of function)
+                    if "   " not in lines[i + 1] :
+                        functions.append(tuple(func))
+        functions = sorted(functions)
+        return tuple(functions)
+    except FileNotFoundError:
+        print(f"Error: File '{filename1}' not found.")
+        return ()
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return ()
 
-            if lines[i+1] not in  "   ":
-                functions.append(tuple(func))
-    functions=sorted(functions)
-    return tuple(functions)
-
-
-
+# Example usage
 print(parse_functions("q2test.py"))
-
-line_number("test2.py","test232.txt")
+line_number("test2.py", "test232.txt")
